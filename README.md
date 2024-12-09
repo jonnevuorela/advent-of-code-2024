@@ -6,7 +6,7 @@
 5  $${\color[rgb]{1,1,0.4}\ast}$$  
 6  $${\color[rgb]{1,1,0.4}\ast}$$  
 7  $${\color[rgb]{1,1,0.4}\ast\ast}$$  
-8  $${\color[rgb]{1,1,0.4}}$$  
+8  $${\color[rgb]{1,1,0.4}\ast}$$  
 9  $${\color[rgb]{1,1,0.4}}$$  
 10 $${\color[rgb]{1,1,0.4}}$$  
 11 $${\color[rgb]{1,1,0.4}}$$  
@@ -25,5 +25,8 @@
 24 $${\color[rgb]{1,1,0.4}}$$  
 25 $${\color[rgb]{1,1,0.4}}$$  
 
-# Day 6 algorithm visualization
+## Algorithm visualization
+### day6
 ![](https://github.com/jonnevuorela/advent-of-code-2024/blob/master/day6/day6_visual.gif)
+### day8
+![](https://github.com/jonnevuorela/advent-of-code-2024/blob/master/day8/day8_visual.gif)
