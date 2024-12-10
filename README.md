@@ -7,7 +7,7 @@
 6  $${\color[rgb]{1,1,0.4}\ast}$$  
 7  $${\color[rgb]{1,1,0.4}\ast\ast}$$  
 8  $${\color[rgb]{1,1,0.4}\ast}$$  
-9  $${\color[rgb]{1,1,0.4}}$$  
+9  $${\color[rgb]{1,1,0.4}\ast}$$  
 10 $${\color[rgb]{1,1,0.4}}$$  
 11 $${\color[rgb]{1,1,0.4}}$$  
 12 $${\color[rgb]{1,1,0.4}}$$  
