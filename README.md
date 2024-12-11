@@ -8,7 +8,7 @@
 7  $${\color[rgb]{1,1,0.4}\ast\ast}$$  
 8  $${\color[rgb]{1,1,0.4}\ast}$$  
 9  $${\color[rgb]{1,1,0.4}\ast}$$  
-10 $${\color[rgb]{1,1,0.4}}$$  
+10 $${\color[rgb]{1,1,0.4}\ast}$$  
 11 $${\color[rgb]{1,1,0.4}}$$  
 12 $${\color[rgb]{1,1,0.4}}$$  
 13 $${\color[rgb]{1,1,0.4}}$$  
@@ -30,3 +30,5 @@
 ![](https://github.com/jonnevuorela/advent-of-code-2024/blob/master/day6/day6_visual.gif)
 ### day8
 ![](https://github.com/jonnevuorela/advent-of-code-2024/blob/master/day8/day8_visual.gif)
+### day10
+![](https://github.com/jonnevuorela/advent-of-code-2024/blob/master/day10/day10_visual.gif)
