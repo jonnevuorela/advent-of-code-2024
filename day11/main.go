@@ -3,8 +3,14 @@ package main
 import (
 	"aoc/input"
 	"bytes"
+	"encoding/binary"
 	"fmt"
+	"hash/fnv"
+	"math"
+	"net/http"
+	_ "net/http/pprof"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -12,7 +18,14 @@ type stone struct {
 	num []byte
 }
 
+var blinkIntCache sync.Map
+
 func main() {
+	go func() {
+		fmt.Println("Starting pprof server on :6060")
+		fmt.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
+
 	startTime := time.Now()
 
 	data := input.GetInput("https://adventofcode.com/2024/day/11/input")
@@ -20,19 +33,160 @@ func main() {
 	totalIterations := 75
 
 	for i := 0; i < totalIterations; i++ {
+		if i < 45 {
+			if i%5 == 0 {
+				cleanCache()
+			}
+		} else if i >= 45 {
+			cleanCache()
+		}
+
 		percentage := (float64(i) / float64(totalIterations)) * 100
 		fmt.Printf("\rProgress: %.1f%%", percentage)
-		newNums := blinkInt(nums)
-		nums = newNums
-		newNums = nil
+		nums = blinkInt(nums)
 	}
 
 	elapsed := time.Since(startTime)
 	fmt.Printf("\rProgress: 100.0%%\n")
 	fmt.Printf("Result: %d\n", len(nums))
 	fmt.Printf("Execution time: %v\n", elapsed)
+
+	var count int
+	blinkIntCache.Range(func(_, _ interface{}) bool {
+		count++
+		return true
+	})
+	fmt.Printf("Cache size: %d\n", count)
 }
 
+var bufferPool = sync.Pool{
+	New: func() interface{} {
+		return new(bytes.Buffer)
+	},
+}
+
+func createCacheKey(nums []int64) string {
+	h := fnv.New64()
+	for _, num := range nums {
+		binary.Write(h, binary.LittleEndian, num)
+	}
+	return string(h.Sum(nil))
+}
+
+func cleanCache() {
+	blinkIntCache = sync.Map{}
+}
+
+func countDigits(n int64) int {
+	if n == 0 {
+		return 1
+	}
+	return int(math.Log10(float64(n))) + 1
+}
+
+func blinkInt(nums []int64) []int64 {
+	chunkSize := 100
+	numChunks := (len(nums) + chunkSize - 1) / chunkSize
+
+	// allocate exact size of needed
+	exactCap := 0
+	for _, num := range nums {
+		if num == 0 || countDigits(num)%2 == 0 {
+			exactCap += 2
+		} else {
+			exactCap += 1
+		}
+	}
+	newNums := make([]int64, 0, exactCap)
+
+	for i := 0; i < numChunks; i++ {
+		start := i * chunkSize
+		end := start + chunkSize
+		if end > len(nums) {
+			end = len(nums)
+		}
+		chunk := nums[start:end]
+
+		chunkKey := createCacheKey(chunk)
+		if cachedChunk, exists := blinkIntCache.Load(chunkKey); exists {
+			newNums = append(newNums, cachedChunk.([]int64)...)
+			continue
+		}
+
+		chunkResult := processChunk(chunk)
+		blinkIntCache.Store(chunkKey, chunkResult)
+		newNums = append(newNums, chunkResult...)
+	}
+
+	return newNums
+}
+func willOverflow(num int64) bool {
+	maxInt64 := int64(9223372036854775807)
+	if num > maxInt64/2024 {
+		return true
+	}
+	return false
+}
+func processChunk(chunk []int64) []int64 {
+	result := make([]int64, 0, len(chunk)*2)
+	for _, num := range chunk {
+		if countDigits(num)%2 != 0 {
+			if willOverflow(num) {
+				panic("Number would overflow int64")
+			}
+		}
+		digits := 1
+		for n := num; n >= 10; n /= 10 {
+			digits++
+		}
+
+		if digits%2 == 0 {
+			divisor := int64(1)
+			for i := 0; i < digits/2; i++ {
+				divisor *= 10
+			}
+			firstHalf := num / divisor
+			secondHalf := num % divisor
+
+			if firstHalf == 0 {
+				firstHalf = 0
+			}
+			if secondHalf == 0 {
+				secondHalf = 0
+			}
+
+			result = append(result, firstHalf)
+			result = append(result, secondHalf)
+		} else {
+			result = append(result, num*2024)
+		}
+	}
+
+	return result
+}
+
+func parseDataInt(data []byte) []int64 {
+	elems := bytes.Split(data, []byte(" "))
+	nums := make([]int64, 0, len(elems))
+
+	for _, elem := range elems {
+		elem = bytes.TrimSpace(elem)
+		if len(elem) == 0 {
+			continue
+		}
+
+		num, err := strconv.ParseInt(string(elem), 10, 64)
+		if err != nil {
+			fmt.Printf("Error parsing number: %v\n", err)
+			continue
+		}
+		nums = append(nums, num)
+	}
+
+	return nums
+}
+
+// part 1
 func blink(stones []stone) []stone {
 	newStones := make([]stone, 0, len(stones)*2)
 
@@ -101,64 +255,4 @@ func parseData(data []byte) []stone {
 	}
 
 	return stones
-}
-
-func blinkInt(nums []int64) []int64 {
-	newNums := make([]int64, 0, len(nums)*2)
-
-	for _, num := range nums {
-		if num == 0 {
-			newNums = append(newNums, 1)
-			continue
-		}
-
-		digits := 1
-		for n := num; n >= 10; n /= 10 {
-			digits++
-		}
-
-		if digits%2 == 0 {
-			divisor := int64(1)
-			for i := 0; i < digits/2; i++ {
-				divisor *= 10
-			}
-			firstHalf := num / divisor
-			secondHalf := num % divisor
-
-			if firstHalf == 0 {
-				firstHalf = 0
-			}
-			if secondHalf == 0 {
-				secondHalf = 0
-			}
-
-			newNums = append(newNums, firstHalf)
-			newNums = append(newNums, secondHalf)
-		} else {
-			newNums = append(newNums, num*2024)
-		}
-	}
-
-	return newNums
-}
-
-func parseDataInt(data []byte) []int64 {
-	elems := bytes.Split(data, []byte(" "))
-	nums := make([]int64, 0, len(elems))
-
-	for _, elem := range elems {
-		elem = bytes.TrimSpace(elem)
-		if len(elem) == 0 {
-			continue
-		}
-
-		num, err := strconv.ParseInt(string(elem), 10, 64)
-		if err != nil {
-			fmt.Printf("Error parsing number: %v\n", err)
-			continue
-		}
-		nums = append(nums, num)
-	}
-
-	return nums
 }
