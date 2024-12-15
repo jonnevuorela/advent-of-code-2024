@@ -12,7 +12,7 @@
 11 $${\color[rgb]{1,1,0.4}\ast}$$  
 12 $${\color[rgb]{1,1,0.4}\ast}$$  
 13 $${\color[rgb]{1,1,0.4}\ast}$$  
-14 $${\color[rgb]{1,1,0.4}}$$  
+14 $${\color[rgb]{0,0,0}\ast\ast}$$  
 15 $${\color[rgb]{1,1,0.4}}$$  
 16 $${\color[rgb]{1,1,0.4}}$$  
 17 $${\color[rgb]{1,1,0.4}}$$  
