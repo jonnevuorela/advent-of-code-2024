@@ -16,7 +16,7 @@
 15 $${\color[rgb]{0.3,0.3,0.3}\ast}{\color[rgb]{0.3,0.3,0.3}\ast}$$  
 16 $${\color[rgb]{1,1,0.4}\ast}{\color[rgb]{0.3,0.3,0.3}\ast}$$  
 17 $${\color[rgb]{1,1,0.4}\ast}{\color[rgb]{0.3,0.3,0.3}\ast}$$  
-18 $${\color[rgb]{1,1,0.4}}$$  
+18  $${\color[rgb]{1,1,0.4}\ast}{\color[rgb]{1,1,0.4}\ast}$$  
 19 $${\color[rgb]{1,1,0.4}}$$  
 20 $${\color[rgb]{1,1,0.4}}$$  
 21 $${\color[rgb]{1,1,0.4}}$$  
